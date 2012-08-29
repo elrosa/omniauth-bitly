@@ -13,17 +13,17 @@ module OmniAuth
         :parse => :query
       }
 
-      uid{ raw_info['login'] }
+      uid{ access_token.params['login'] }
 
 
       info do
         {
-          'login' => raw_info['login'],
+          'login' => access_token.params['login'],
+          'api_key' => access_token.params['apiKey'],
           'display_name' => raw_info['display_name'],
           'full_name' => raw_info['full_name'],
           'profile_image' => raw_info['profile_image'],
-          'profile_url'=>raw_info['profile_url'],
-          'api_key' => raw_info['apiKey']
+          'profile_url'=>raw_info['profile_url']
         }
       end
 
@@ -35,7 +35,7 @@ module OmniAuth
         # HACK HACK HACK
         access_token.options[:mode] = :query
         access_token.options[:param_name] = :access_token
-        @raw_info ||= MultiJson.encode(access_token.get('/v3/user/info').body)['data']
+        @raw_info ||= MultiJson.decode(access_token.get('/v3/user/info').body)
       end
 
     end
